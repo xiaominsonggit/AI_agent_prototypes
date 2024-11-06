@@ -6,6 +6,7 @@ _ = load_dotenv()
 from openai import OpenAI
 
 
+# Reference: https://arxiv.org/pdf/2210.03629
 class Agent:
     def __init__(self, system=""):
         self.client = OpenAI(
