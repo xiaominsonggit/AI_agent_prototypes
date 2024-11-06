@@ -1,0 +1,5 @@
+openai
+dotenv
+re
+httpx
+os
