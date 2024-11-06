@@ -1,6 +1,4 @@
-import openai
 import re
-import httpx
 import os
 from dotenv import load_dotenv
 
@@ -8,11 +6,11 @@ _ = load_dotenv()
 from openai import OpenAI
 
 
-class Agent():
+class Agent:
     def __init__(self, system=""):
         self.client = OpenAI(
-            api_key = os.environ.get("OPENAI_API_KEY"),
-            )
+            api_key=os.environ.get("OPENAI_API_KEY"),
+        )
         self.system = system
         self.messages = []
         if self.system:
@@ -26,31 +24,31 @@ class Agent():
 
     def execute(self):
         completion = self.client.chat.completions.create(
-                        model="gpt-4o-mini", 
-                        temperature=0,
-                        messages=self.messages)
+            model="gpt-4o-mini", temperature=0, messages=self.messages
+        )
         return completion.choices[0].message.content
+
 
 def calculate(what):
     return eval(what)
 
-def average_dog_weight(name):
-    if name in "Scottish Terrier": 
-        return("Scottish Terriers average 20 lbs")
-    elif name in "Border Collie":
-        return("a Border Collies average weight is 37 lbs")
-    elif name in "Toy Poodle":
-        return("a toy poodles average weight is 7 lbs")
-    else:
-        return("An average dog weights 50 lbs")
 
-known_actions = {
-    "calculate": calculate,
-    "average_dog_weight": average_dog_weight
-}
+def average_dog_weight(name):
+    if name in "Scottish Terrier":
+        return "Scottish Terriers average 20 lbs"
+    elif name in "Border Collie":
+        return "a Border Collies average weight is 37 lbs"
+    elif name in "Toy Poodle":
+        return "a toy poodles average weight is 7 lbs"
+    else:
+        return "An average dog weights 50 lbs"
+
+
+known_actions = {"calculate": calculate, "average_dog_weight": average_dog_weight}
 
 # python regular expression to selection action
-action_re = re.compile('^Action: (\w+): (.*)$')
+action_re = re.compile("^Action: (\w+): (.*)$")
+
 
 def query(question, prompt, max_turns=5):
     i = 0
@@ -60,11 +58,7 @@ def query(question, prompt, max_turns=5):
         i += 1
         result = bot(next_prompt)
         print(result)
-        actions = [
-            action_re.match(a) 
-            for a in result.split('\n') 
-            if action_re.match(a)
-        ]
+        actions = [action_re.match(a) for a in result.split("\n") if action_re.match(a)]
         if actions:
             # There is an action to run
             action, action_input = actions[0].groups()
